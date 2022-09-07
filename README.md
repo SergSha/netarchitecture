@@ -123,14 +123,19 @@ Broadcast-адрес нужен для рассылки всем устройс�
 
 <table>
 <tr>
-    <td>Сеть</td>
-    <td>Маска</td>
-    <td>Кол-во<br />адресов</td>
-    <td>Первый адрес в сети</td>
-    <td>Последний адрес в сети</td>
-    <td>Broadcast — адрес</td>
+    <td>Name</th>
+    <th>Network</th>
+    <th>Netmask</th>
+    <td>N</th>
+    <th>Hostmin</th>
+    <th>Hostmax</th>
+    <th>Broadcast</th>
 </tr>
 <tr>
+    <th cols=7>Central Network</th>
+</tr>
+<tr>
+    <td>Directors</td>
     <td>192.168.0.0/28</td>
     <td>255.255.255.240</td>
     <td>14</td>
