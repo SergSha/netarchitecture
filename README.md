@@ -123,25 +123,25 @@ Broadcast-адрес нужен для рассылки всем устройс�
 
 <table>
 <tr>
-    <td>Name</th>
+    <th>Name</th>
     <th>Network</th>
     <th>Netmask</th>
-    <td>N</th>
+    <th>N</th>
     <th>Hostmin</th>
     <th>Hostmax</th>
     <th>Broadcast</th>
 </tr>
 <tr>
-    <th cols=7>Central Network</th>
+    <th colspan="7">Central Network</th>
 </tr>
 <tr>
-    <td>Directors</td>
-    <td>192.168.0.0/28</td>
-    <td>255.255.255.240</td>
-    <td>14</td>
-    <td>192.168.0.1</td>
-    <td>192.168.0.14</td>
-    <td>192.168.0.15</td>
+    <td align=center>Directors</td>
+    <td align=center>192.168.0.0/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.0.1</td>
+    <td align=center>192.168.0.14</td>
+    <td align=center>192.168.0.15</td>
 </tr>
 </table>
 
