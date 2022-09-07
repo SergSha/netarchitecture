@@ -132,16 +132,103 @@ Broadcast-адрес нужен для рассылки всем устройс�
     <th>Broadcast</th>
 </tr>
 <tr>
+    <th colspan="7">Office1 Network</th>
+</tr>
+<tr>
+    <td align=center>dev</td>
+    <td align=center>192.168.2.0/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.2.1</td>
+    <td align=center>192.168.2.62</td>
+    <td align=center>192.168.2.63</td>
+</tr>
+<tr>
+    <td align=center>test servers</td>
+    <td align=center>192.168.2.64/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.2.65</td>
+    <td align=center>192.168.2.126</td>
+    <td align=center>192.168.2.127</td>
+</tr>
+<tr>
+    <td align=center>managers</td>
+    <td align=center>192.168.2.128/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.2.129</td>
+    <td align=center>192.168.2.190</td>
+    <td align=center>192.168.2.191</td>
+</tr>
+<tr>
+    <td align=center>office hardware</td>
+    <td align=center>192.168.2.192/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.2.193</td>
+    <td align=center>192.168.2.254</td>
+    <td align=center>192.168.2.255</td>
+</tr>
+<tr>
+    <th colspan="7">Office2 Network</th>
+</tr>
+<tr>
+    <td align=center>dev</td>
+    <td align=center>192.168.1.0/25</td>
+    <td align=center>255.255.255.128</td>
+    <td align=center>126</td>
+    <td align=center>192.168.1.1</td>
+    <td align=center>192.168.1.126</td>
+    <td align=center>192.168.1.127</td>
+</tr>
+<tr>
+    <td align=center>test servers</td>
+    <td align=center>192.168.1.128/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.1.129</td>
+    <td align=center>192.168.1.190</td>
+    <td align=center>192.168.1.191</td>
+</tr>
+<tr>
+    <td align=center>office hardware</td>
+    <td align=center>192.168.1.192/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.1.193</td>
+    <td align=center>192.168.1.254</td>
+    <td align=center>192.168.1.255</td>
+</tr>
+<tr>
     <th colspan="7">Central Network</th>
 </tr>
 <tr>
-    <td align=center>Directors</td>
+    <td align=center>directors</td>
     <td align=center>192.168.0.0/28</td>
     <td align=center>255.255.255.240</td>
     <td align=center>14</td>
     <td align=center>192.168.0.1</td>
     <td align=center>192.168.0.14</td>
     <td align=center>192.168.0.15</td>
+</tr>
+<tr>
+    <td align=center>office hardware</td>
+    <td align=center>192.168.0.32/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.0.33</td>
+    <td align=center>192.168.0.46</td>
+    <td align=center>192.168.0.47</td>
+</tr>
+<tr>
+    <td align=center>wifi</td>
+    <td align=center>192.168.0.64/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.0.65</td>
+    <td align=center>192.168.0.126</td>
+    <td align=center>192.168.0.127</td>
 </tr>
 </table>
 
