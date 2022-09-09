@@ -66,6 +66,7 @@ Office2----/
 </ul>
 
 <h4>Практическая часть</h4>
+
 <ul>
 <li>Соединить офисы в сеть согласно схеме и настроить роутинг</li>
 <li>Все сервера и роутеры должны ходить в инет черз inetRouter</li>
@@ -113,13 +114,11 @@ Office2----/
 2        − 2 = 16 − 2 = 14</p>
 
 <p>Цифра 2 вычитается, так как:<br />
-● Первый адрес (192.168.0.0) — это наименование подсети, его нельзя
-задать устройству<br />
+● Первый адрес (192.168.0.0) — это наименование подсети, его нельзя задать устройству<br />
 ● Последний адрес (192.168.0.15) — это всегда broadcast-адрес.<br />
 Broadcast-адрес нужен для рассылки всем устройствам сети.</p>
 
-<p>Таким образом мы можем сформировать таблицу топологии нашей
-сети</p>
+<p>Таким образом мы можем сформировать таблицу топологии нашей сети:</p>
 
 <table>
 <tr>
@@ -130,6 +129,36 @@ Broadcast-адрес нужен для рассылки всем устройс�
     <th>Hostmin</th>
     <th>Hostmax</th>
     <th>Broadcast</th>
+</tr>
+<tr>
+    <th colspan="7">Central Network</th>
+</tr>
+<tr>
+    <td align=center>directors</td>
+    <td align=center>192.168.0.0/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.0.1</td>
+    <td align=center>192.168.0.14</td>
+    <td align=center>192.168.0.15</td>
+</tr>
+<tr>
+    <td align=center>office hardware</td>
+    <td align=center>192.168.0.32/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.0.33</td>
+    <td align=center>192.168.0.46</td>
+    <td align=center>192.168.0.47</td>
+</tr>
+<tr>
+    <td align=center>wifi</td>
+    <td align=center>192.168.0.64/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.0.65</td>
+    <td align=center>192.168.0.126</td>
+    <td align=center>192.168.0.127</td>
 </tr>
 <tr>
     <th colspan="7">Office1 Network</th>
@@ -201,161 +230,467 @@ Broadcast-адрес нужен для рассылки всем устройс�
     <td align=center>192.168.1.255</td>
 </tr>
 <tr>
-    <th colspan="7">Central Network</th>
+    <th colspan="7">InetRouter - CentralRouter Network</th>
 </tr>
 <tr>
-    <td align=center>directors</td>
-    <td align=center>192.168.0.0/28</td>
-    <td align=center>255.255.255.240</td>
-    <td align=center>14</td>
-    <td align=center>192.168.0.1</td>
-    <td align=center>192.168.0.14</td>
-    <td align=center>192.168.0.15</td>
-</tr>
-<tr>
-    <td align=center>office hardware</td>
-    <td align=center>192.168.0.32/28</td>
-    <td align=center>255.255.255.240</td>
-    <td align=center>14</td>
-    <td align=center>192.168.0.33</td>
-    <td align=center>192.168.0.46</td>
-    <td align=center>192.168.0.47</td>
-</tr>
-<tr>
-    <td align=center>wifi</td>
-    <td align=center>192.168.0.64/26</td>
-    <td align=center>255.255.255.192</td>
-    <td align=center>62</td>
-    <td align=center>192.168.0.65</td>
-    <td align=center>192.168.0.126</td>
-    <td align=center>192.168.0.127</td>
+    <td align=center>inet-central</td>
+    <td align=center>192.168.255.0/30</td>
+    <td align=center>255.255.255.252</td>
+    <td align=center>2</td>
+    <td align=center>192.168.255.1</td>
+    <td align=center>192.168.255.2</td>
+    <td align=center>192.168.255.3</td>
 </tr>
 </table>
 
+<p>После создания таблицы топологии, мы можем заметить, что ошибок в задании нет, также мы сразу видим следующие свободные сети:</p>
+
+<p>192.168.0.16/28<br />
+192.168.0.48/28<br />
+192.168.0.128/25</p>
+
+<p>192.168.255.4/30<br />
+192.168.255.8/29<br />
+192.168.255.16/28<br />
+192.168.255.32/27<br />
+192.168.255.64/26<br />
+192.168.255.128/25</p>
+
+<p>Сформируем таблицу топологии свободных подсетей:</p>
+
+<table>
+<tr>
+    <th>Name</th>
+    <th>Network</th>
+    <th>Netmask</th>
+    <th>N</th>
+    <th>Hostmin</th>
+    <th>Hostmax</th>
+    <th>Broadcast</th>
+</tr>
+<tr>
+    <th colspan="7">Central Network</th>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.0.16/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.0.17</td>
+    <td align=center>192.168.0.30</td>
+    <td align=center>192.168.0.31</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.0.48/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.0.49</td>
+    <td align=center>192.168.0.62</td>
+    <td align=center>192.168.0.63</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.0.128/25</td>
+    <td align=center>255.255.255.128</td>
+    <td align=center>126</td>
+    <td align=center>192.168.0.129</td>
+    <td align=center>192.168.0.254</td>
+    <td align=center>192.168.0.255</td>
+</tr>
+<tr>
+    <th colspan="7">InetRouter - CentralRouter Network</th>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.255.4/30</td>
+    <td align=center>255.255.255.252</td>
+    <td align=center>2</td>
+    <td align=center>192.168.255.5</td>
+    <td align=center>192.168.255.6</td>
+    <td align=center>192.168.255.7</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.255.8/29</td>
+    <td align=center>255.255.255.248</td>
+    <td align=center>6</td>
+    <td align=center>192.168.255.9</td>
+    <td align=center>192.168.255.14</td>
+    <td align=center>192.168.255.15</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.255.16/28</td>
+    <td align=center>255.255.255.240</td>
+    <td align=center>14</td>
+    <td align=center>192.168.255.17</td>
+    <td align=center>192.168.255.30</td>
+    <td align=center>192.168.255.31</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.255.32/27</td>
+    <td align=center>255.255.255.224</td>
+    <td align=center>30</td>
+    <td align=center>192.168.255.33</td>
+    <td align=center>192.168.255.62</td>
+    <td align=center>192.168.255.63</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.255.64/26</td>
+    <td align=center>255.255.255.192</td>
+    <td align=center>62</td>
+    <td align=center>192.168.255.65</td>
+    <td align=center>192.168.255.126</td>
+    <td align=center>192.168.255.127</td>
+</tr>
+<tr>
+    <td align=center></td>
+    <td align=center>192.168.255.128/25</td>
+    <td align=center>255.255.255.128</td>
+    <td align=center>126</td>
+    <td align=center>192.168.255.129</td>
+    <td align=center>192.168.255.254</td>
+    <td align=center>192.168.255.255</td>
+</tr>
+</table>
+
+<h4>Практическая часть</h4>
+
+<p>Изучив таблицу топологии сети и Vagrant-стенд из задания, мы можем построить полную схему сети:</p>
 
 
 
+<p>Знак облака означает сеть, которую необходимо будет настроить на сервере.<br />
+Значки роутеров и серверов означают хосты, которые нам нужно будет создать.</p>
 
+<p>На схеме, мы сразу можем увидеть, что нам потребуется создать дополнительно 2 сети (на схеме обозначены полужирными фиолетовыми линиями):<br />
+Для соединения office1Router c centralRouter — 192.168.255.8/30<br />
+Для соединения office2Router c centralRouter — 192.168.255.4/30<br />
+На основании этой схемы мы получаем готовый список серверов. Для более подробного изучения, сделаем новые хосты с другими ОС.</p>
 
+<table>
+<tr>
+    <th>Server</th>
+    <th>IP and Bitmask</th>
+    <th>OS</th>
+</tr>
+<tr>
+    <td rowspan="2">inetRouter</td>
+    <td>Default-NAT address VirtualBox</td>
+    <td rowspan="2">CentOS 7</td>
+    <td>192.168.255.1/30</td>
+</tr>
+<tr>
+    <td rowspan="6">centralRouter</td>
+    <td>192.168.255.2/30</td>
+    <td rowspan="6">CentOS 7</td>
+    <td>192.168.0.1/28</td>
+    <td>192.168.0.33/28</td>
+    <td>192.168.0.65/26</td>
+    <td>192.168.255.9/30</td>
+    <td>192.168.255.5/30</td>
+</tr>
+<tr>
+    <td>centralServer</td>
+    <td>192.168.0.2/28</td>
+    <td>CentOS 7</td>
+</tr>
+<tr>
+    <td rowspan="5">office1Router</td>
+    <td>192.168.255.10/30</td>
+    <td rowspan="5">Ubuntu 20</td>
+    <td>192.168.2.1/26</td>
+    <td>192.168.2.65/26</td>
+    <td>192.168.2.129/26</td>
+    <td>192.168.2.193/26</td>
+</tr>
+<tr>
+    <td>office1Server</td>
+    <td>192.168.2.130/26</td>
+    <td>Ubuntu 20</td>
+</tr>
+<tr>
+    <td rowspan="4">office2Router</td>
+    <td>192.168.255.6/30</td>
+    <td rowspan="5">Debian 11</td>
+    <td>192.168.1.1/26</td>
+    <td>192.168.1.129/26</td>
+    <td>192.168.1.193/26</td>
+</tr>
+<tr>
+    <td>office2Server</td>
+    <td>192.168.1.2/26</td>
+    <td>Debian 11</td>
+</tr>
+</table>
 
+<p>В домашней директории создадим директорию netarchitecture, в котором будут храниться настройки виртуальных машин:</p>
 
-<h4>1. Создаём виртуальные машины backup и client</h4>
-
-<p>В домашней директории создадим директорию backup, в котором будут храниться настройки виртуальных машин backup и client:</p>
-
-<pre>[user@localhost otus]$ mkdir ./backup
+<pre>[user@localhost otus]$ mkdir ./netarchitecture
 [user@localhost otus]$</pre>
 
 <p>Перейдём в директорию backup:</p>
 
-<pre>[user@localhost otus]$ cd ./backup/
-[user@localhost backup]$</pre>
+<pre>[user@localhost otus]$ cd ./netarchitecture/
+[user@localhost netarchitecture]$</pre>
 
-<p>Создадим файл Vagrantfile:</p>
+<p>Скачаем Vagrantfile из репозитория<br />
+https://github.com/erlong15/otus-linux/tree/network<br />
+В inetRouter заменим версию CentOS/6 на CentOS/7, после
+изменений мы получим следующий файл:</p>
 
-<pre>[user@localhost backup]$ vi ./Vagrantfile</pre>
+<pre># -*- mode: ruby -*-
+# vim: set ft=ruby :
 
-<p>Заполним следующим содержимым:</p>
+MACHINES = {
+  :inetRouter => {
+        :box_name => "centos/7",
+        #:public => {:ip => '10.10.10.1', :adapter => 1},
+        :net => [
+                   {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+                ]
+  },
+  :centralRouter => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.255.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+                   {ip: '192.168.0.1', adapter: 3, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+                   {ip: '192.168.0.33', adapter: 4, netmask: "255.255.255.240", virtualbox__intnet: "hw-net"},
+                   {ip: '192.168.0.65', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "mgt-net"},
+                ]
+  },
+  :centralServer => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.0.2', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+                   {adapter: 3, auto_config: false, virtualbox__intnet: true},
+                   {adapter: 4, auto_config: false, virtualbox__intnet: true},
+                ]
+  },
+}
+Vagrant.configure("2") do |config|
+  MACHINES.each do |boxname, boxconfig|
+    config.vm.define boxname do |box|
+        box.vm.box = boxconfig[:box_name]
+        box.vm.host_name = boxname.to_s
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+        box.vm.provision "shell", inline: <<-SHELL
+          mkdir -p ~root/.ssh
+                cp ~vagrant/.ssh/auth* ~root/.ssh
+        SHELL
+        case boxname.to_s
+        when "inetRouter"
+          box.vm.provision "shell", run: "always", inline: <<-SHELL
+            sysctl net.ipv4.conf.all.forwarding=1
+            iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+            SHELL
+        when "centralRouter"
+          box.vm.provision "shell", run: "always", inline: <<-SHELL
+            sysctl net.ipv4.conf.all.forwarding=1
+            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+            echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+            systemctl restart network
+            SHELL
+        when "centralServer"
+          box.vm.provision "shell", run: "always", inline: <<-SHELL
+            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+            echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+            systemctl restart network
+            SHELL
+        end
+      end
+  end
+end</pre>
+
+<p>Запустим эти виртуальные машины:</p>
+
+<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant up</pre>
+
+<p>Данный Vagrantfile развернет нам 3 хоста: inetRouter, centralRouter и centralServer:</p>
+
+<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant status
+Current machine states:
+
+inetRouter                running (virtualbox)
+centralRouter             running (virtualbox)
+centralServer             running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+[student@pv-homeworks1-10 netarchitecture]$</pre>
+
+<p>Исходя их схемы нам ещё потребуется развернуть 4 сервера:<br />
+● office1Router<br />
+● office1Server<br />
+● office2Router<br />
+● office2Server<br />
+Опираясь на таблицу и схему мы можем дописать хосты в Vagrantfile:</p>
 
 <pre># -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-hosts = [
-  {
-  :name => "backup",
-  :box_name => "centos/7",
-  :ip_addr => "192.168.50.160",
-  :disks => {
-    :sata1 => {
-      :dfile => './disks/sata_backup1.vdi',
-      :size => 2048,
-      :port => 1
-      }
-    }
+MACHINES = {
+  :inetRouter => {
+    :box_name => "centos/7",
+    :vm_name => "inetRouter",
+    #:public => {:ip => '10.10.10.1', :adapter => 1},
+    :net => [
+      {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+      {ip: '192.168.50.10', adapter: 8},
+    ]
   },
-  {
-  :name => "client",
-  :box_name => "centos/7",
-  :ip_addr => "192.168.50.150",
-  :disks => {}
-  }
-]
-
+  :centralRouter => {
+    :box_name => "centos/7",
+    :vm_name => "centralRouter",
+    :net => [
+      {ip: '192.168.255.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+      {ip: '192.168.0.1', adapter: 3, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+      {ip: '192.168.0.33', adapter: 4, netmask: "255.255.255.240", virtualbox__intnet: "hw-net"},
+      {ip: '192.168.0.65', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "mgt-net"},
+      {ip: '192.168.255.9', adapter: 6, netmask: "255.255.255.252", virtualbox__intnet: "office1-central"},
+      {ip: '192.168.255.5', adapter: 7, netmask: "255.255.255.252", virtualbox__intnet: "office2-central"},
+      {ip: '192.168.50.11', adapter: 8},
+    ]
+  },
+  :centralServer => {
+    :box_name => "centos/7",
+    :vm_name => "centralServer",
+    :net => [
+      {ip: '192.168.0.2', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+      #{adapter: 3, auto_config: false, virtualbox__intnet: true},
+      #{adapter: 4, auto_config: false, virtualbox__intnet: true},
+      {ip: '192.168.50.12', adapter: 8},
+    ]
+  },
+  :office1Router => {
+    :box_name => "ubuntu/focal64",
+    :vm_name => "office1Router",
+    :net => [
+      {ip: '192.168.255.10', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "office1-central"},
+      {ip: '192.168.2.1', adapter: 3, netmask: "255.255.255.192", virtualbox__intnet: "dev1-net"},
+      {ip: '192.168.2.65', adapter: 4, netmask: "255.255.255.192", virtualbox__intnet: "test1-net"},
+      {ip: '192.168.2.129', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "managers-net"},
+      {ip: '192.168.2.193', adapter: 6, netmask: "255.255.255.192", virtualbox__intnet: "office1-net"},
+	  {ip: '192.168.50.20', adapter: 8},
+    ]
+  },
+  :office1Server => {
+    :box_name => "ubuntu/focal64",
+    :vm_name => "office1Server",
+    :net => [
+      {ip: '192.168.2.130', adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "managers-net"},
+      {ip: '192.168.50.21', adapter: 8},
+    ]
+  },
+  :office2Router => {
+    :box_name => "debian/bullseye64",
+    :vm_name => "office2Router",
+    :net => [
+      {ip: '192.168.255.6', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "office2-central"},
+      {ip: '192.168.1.1', adapter: 3, netmask: "255.255.255.128", virtualbox__intnet: "dev2-net"},
+      {ip: '192.168.1.129', adapter: 4, netmask: "255.255.255.192", virtualbox__intnet: "test2-net"},
+      {ip: '192.168.1.193', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "office2-net"},
+	  {ip: '192.168.50.30', adapter: 8},
+    ]
+  },
+  :office2Server => {
+    :box_name => "debian/bullseye64",
+    :vm_name => "office2Server",
+    :net => [
+      {ip: '192.168.1.2', adapter: 2, netmask: "255.255.255.128", virtualbox__intnet: "dev2-net"},
+      {ip: '192.168.50.31', adapter: 8},
+    ]
+  },
+}
 Vagrant.configure("2") do |config|
-  hosts.each do |opts|
-    config.vm.define opts[:name] do |config|
-      config.vm.box = opts[:box_name]
-      config.vm.hostname = opts[:name].to_s
-#      config.vm.opts[:name] = "%s" % opts[:name]
-      config.vm.network "private_network", ip: opts[:ip_addr]
-      config.vm.provider :virtualbox do |vb|
-        vb.name = opts[:name]
-        vb.customize ["modifyvm", :id, "--memory", "512"]
-        needsController = false
-        opts[:disks].each do |dname, dconf|
-          unless File.exist?(dconf[:dfile])
-            vb.customize ['createhd', '--filename', dconf[:dfile], '--variant', 'Fixed', '--size', dconf[:size]]
-            needsController =  true
-          end
-        end
-        if needsController == true
-          vb.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
-          opts[:disks].each do |dname, dconf|
-            vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', dconf[:port], '--device', 0, '--type', 'hdd', '--medium', dconf[:dfile]]
-          end
-        end
+  MACHINES.each do |boxname, boxconfig|
+    config.vm.define boxname do |box|
+      box.vm.box = boxconfig[:box_name]
+      box.vm.host_name = boxname.to_s
+      boxconfig[:net].each do |ipconf|
+        box.vm.network "private_network", ipconf
       end
-      config.vm.provision "shell", inline: <<-SHELL
-        mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
-        sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-        systemctl restart sshd
+      if boxconfig.key?(:public)
+        box.vm.network "public_network", boxconfig[:public]
+      end
+      box.vm.provision "shell", inline: <<-SHELL
+        mkdir -p ~root/.ssh
+        cp ~vagrant/.ssh/auth* ~root/.ssh
       SHELL
-#      if opts[:name] == hosts.last[:name]
-#        config.vm.provision "ansible" do |ansible|
-#          ansible.playbook = "playbook.yml"
-#          ansible.inventory_path = "hosts"
+      case boxname.to_s
+      when "inetRouter"
+        box.vm.provision "shell", run: "always", inline: <<-SHELL
+          sysctl net.ipv4.conf.all.forwarding=1
+          iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+        SHELL
+      when "centralRouter"
+        box.vm.provision "shell", run: "always", inline: <<-SHELL
+          sysctl net.ipv4.conf.all.forwarding=1
+          echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+          echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          systemctl restart network
+        SHELL
+      when "centralServer"
+        box.vm.provision "shell", run: "always", inline: <<-SHELL
+          echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+          echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          systemctl restart network
+        SHELL
+      end
+#      if boxconfig[:vm_name] == "office2Server"
+#        box.vm.provision "ansible" do |ansible|
+#          ansible.playbook = "ansible/provision.yml"
+#          ansible.inventory_path = "ansible/hosts"
 #          ansible.host_key_checking = "false"
 #          ansible.limit = "all"
 #        end
 #      end
     end
   end
-end
-</pre>
+end</pre>
 
-<p>Запустим эти виртуальные машины:</p>
+<p>В данный Vagrantfile мы добавили информацию о 4 новых серверах, также к старым серверам добавили 2 интерфейса для соединения сетей офисов (в коде выделены полужирным).<br />
+Дополнительно в коде добавили сетевые устройства из подсети 192.168.50.0/24 — они потребуются для настройки хостов с помощью Ansible.</p>
 
-<pre>[user@localhost backup]$ vagrant up</pre>
+<p>Снова запустим эти виртуальные машины:</p>
 
-<p>Проверим состояние созданных и запущенных машин:</p>
+<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant up</pre>
 
-<pre>[user@localhost backup]$ vagrant status
+<p>Смотрим состояние запущенных виртуальных машин:</p>
+
+<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant status
 Current machine states:
 
-backup                       running (virtualbox)
-client                       running (virtualbox)
+inetRouter                running (virtualbox)
+centralRouter             running (virtualbox)
+centralServer             running (virtualbox)
+office1Router             running (virtualbox)
+office1Server             running (virtualbox)
+office2Router             running (virtualbox)
+office2Server             running (virtualbox)
 
 This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
-[user@localhost backup]$</pre>
+[student@pv-homeworks1-10 netarchitecture]$</pre>
 
-<p>Заходим на сервер backup:</p>
+<p>После того, как все 7 серверов у нас развернуты, нам нужно настроить маршрутизацию и NAT таким образом, чтобы доступ в Интернет со всех хостов был через inetRouter и каждый сервер должен быть доступен с любого из 7 хостов.<br />
+Часть настройки у нас уже выполнена, давайте рассмотрим подробнее команды из Vagrantfile.</p>
 
-<pre>[user@localhost backup]$ vagrant ssh backup
-[vagrant@backup ~]$</pre>
+<h4>Настройка NAT</h4>
 
-<p>Заходим под правами root:</p>
 
-<pre>[vagrant@backup ~]$ sudo -i
-[root@backup ~]#</pre>
 
-<p>Подключаем EPEL репозиторий с дополнительными пакетами:</p>
 
-<pre>[root@backup ~]# yum install -y epel-release
-...
-Installed:
-  epel-release.noarch 0:7-11
 
-Complete!
-[root@backup ~]#</pre>
+
+
