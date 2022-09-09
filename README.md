@@ -1117,7 +1117,7 @@ end
 
 <p>Для проверки нашего стенда на все хосты установим утилиту traceroute.<br />
 Установка traceroute:<br />
-● CentOS 7: yum —i install traceroute
+● CentOS 7: yum -y install traceroute<br />
 ● Debian,Ubuntu: apt install -y traceroute</p>
 
 <p>Проверка выхода в Интернет через сервер inetRouter c хоста office1Server:</p>
