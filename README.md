@@ -858,7 +858,70 @@ COMMIT
 
 <pre>[student@pv-homeworks1-10 netarchitecture]$ vi ./ansible/hosts</pre>
 
+<pre>[routers]
+inetRouter ansible_host=192.168.50.10 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/inetRouter/virtualbox/private_key
+centralRouter ansible_host=192.168.50.11 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/centralRouter/virtualbox/private_key
+office1Router ansible_host=192.168.50.20 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/office1Router/virtualbox/private_key
+office2Router ansible_host=192.168.50.30 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/office2Router/virtualbox/private_key
 
+[servers]
+centralServer ansible_host=192.168.50.12 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/centralServer/virtualbox/private_key
+office1Server ansible_host=192.168.50.21 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/office1Server/virtualbox/private_key
+office2Server ansible_host=192.168.50.31 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/office2Server/virtualbox/private_key</pre>
+
+<p>Файл hosts — это файл инвентаризации, в нем указан список серверов, их адреса, группы и способы доступа на сервер.</p>
+
+<h4>Отключение маршрута по умолчанию на интерфейсе eth0</h4>
+
+<p>При разворачивании нашего стенда Vagrant создает в каждом сервере свой интерфейс, через который у сервера появляется доступ в интернет. Отключить данный порт нельзя, так как через него Vagrant подключается к серверам. Обычно маршрут по умолчанию прописан как раз на этот интерфейс, данный маршрут нужно отключить.Для отключения дефолтного маршрута нужно в файле <br />
+/etc/sysconfig/network-scripts/ifcfg-eth0 <br /> 
+найти строку <br />
+DEFROUTE=yes и поменять её на DEFROUTE=no<br />
+Vagrant по умолчанию не добавляет строку DEFROUTE=yes, <br />
+поэтому нам можно просто добавить строку DEFROUTE=no <br />
+Добавление строки:</p>
+
+<pre>echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0</pre>
+
+<p>Данное действие нужно выполнить только на CentOS-серверах centralRouter и centralServer. <br />
+После удаление маршрута по умолчанию, нужно добавить дефолтный маршрут на другой порт. Делается это с помощью идентичной команды, например, команда добавления маршрута по умолчанию на сервере centralServer будет такой:</p>
+
+<pre>echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1</pre>
+
+<p>После внесения данных изменений нужно перезапустить сетевую службу:</p>
+
+<pre>sytemctl restart network</pre>
+
+<p>Для выполнения идентичных изменений с помощью Ansible, воспользуемся следующим блоком:</p>
+
+<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/tasks/main.yml</pre>
+
+<pre># echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+- name: deisable default route
+lineinfile:
+dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+line: DEFROUTE=no
+when: (ansible_hostname == "centralRouter") or
+(ansible_hostname == "centralServer")
+# echo "GATEWAY=192.168.255.1" >>
+/etc/sysconfig/network-scripts/ifcfg-eth1
+- name: add default gateway for centralRouter
+lineinfile:
+dest: /etc/sysconfig/network-scripts/ifcfg-eth1line: GATEWAY=192.168.255.1
+when: (ansible_hostname == "centralRouter")
+# echo "GATEWAY=192.168.0.1" >>
+/etc/sysconfig/network-scripts/ifcfg-eth1
+- name: add default gateway for centralServer
+lineinfile:
+dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+line: GATEWAY=192.168.0.1
+when: (ansible_hostname == "centralServer"</pre>
+
+<p>Модуль lineinfile добавляет строку в файл. Если строка уже добавлена, то второй раз она не добавится.</p>
+
+<p>Далее нам нужно настроить статическую маршрутизацию на всех серверах.</p>
+
+<h4>Настройка статических маршрутов</h4>
 
 
 
