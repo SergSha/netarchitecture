@@ -381,12 +381,16 @@ Broadcast-адрес нужен для рассылки всем устройс�
     <td rowspan="2">inetRouter</td>
     <td>Default-NAT address VirtualBox</td>
     <td rowspan="2">CentOS 7</td>
+</tr>
+<tr>
     <td>192.168.255.1/30</td>
 </tr>
 <tr>
     <td rowspan="6">centralRouter</td>
     <td>192.168.255.2/30</td>
     <td rowspan="6">CentOS 7</td>
+</tr>
+<tr>
     <td>192.168.0.1/28</td>
     <td>192.168.0.33/28</td>
     <td>192.168.0.65/26</td>
@@ -402,6 +406,8 @@ Broadcast-адрес нужен для рассылки всем устройс�
     <td rowspan="5">office1Router</td>
     <td>192.168.255.10/30</td>
     <td rowspan="5">Ubuntu 20</td>
+</tr>
+<tr>
     <td>192.168.2.1/26</td>
     <td>192.168.2.65/26</td>
     <td>192.168.2.129/26</td>
@@ -416,6 +422,8 @@ Broadcast-адрес нужен для рассылки всем устройс�
     <td rowspan="4">office2Router</td>
     <td>192.168.255.6/30</td>
     <td rowspan="5">Debian 11</td>
+</tr>
+<tr>
     <td>192.168.1.1/26</td>
     <td>192.168.1.129/26</td>
     <td>192.168.1.193/26</td>
