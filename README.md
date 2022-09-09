@@ -653,25 +653,25 @@ Vagrant.configure("2") do |config|
         cp ~vagrant/.ssh/auth* ~root/.ssh
       SHELL
       case boxname.to_s
-      when "inetRouter"
-        box.vm.provision "shell", run: "always", inline: <<-SHELL
-          sysctl net.ipv4.conf.all.forwarding=1
-          iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
-        SHELL
-      when "centralRouter"
-        box.vm.provision "shell", run: "always", inline: <<-SHELL
-          sysctl net.ipv4.conf.all.forwarding=1
-          echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
-          echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
-          systemctl restart network
-        SHELL
-      when "centralServer"
-        box.vm.provision "shell", run: "always", inline: <<-SHELL
-          echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
-          echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
-          systemctl restart network
-        SHELL
-      end
+#      when "inetRouter"
+#        box.vm.provision "shell", run: "always", inline: <<-SHELL
+#          sysctl net.ipv4.conf.all.forwarding=1
+#          iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+#        SHELL
+#      when "centralRouter"
+#        box.vm.provision "shell", run: "always", inline: <<-SHELL
+#          sysctl net.ipv4.conf.all.forwarding=1
+#          echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+#          echo "GATEWAY=192.168.255.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+#          systemctl restart network
+#        SHELL
+#      when "centralServer"
+#        box.vm.provision "shell", run: "always", inline: <<-SHELL
+#          echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+#          echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+#          systemctl restart network
+#        SHELL
+#      end
 #      if boxconfig[:vm_name] == "office2Server"
 #        box.vm.provision "ansible" do |ansible|
 #          ansible.playbook = "ansible/provision.yml"
@@ -685,7 +685,8 @@ Vagrant.configure("2") do |config|
 end</pre>
 
 <p>В данный Vagrantfile мы добавили информацию о 4 новых серверах, также к старым серверам добавили 2 интерфейса для соединения сетей офисов (в коде выделены полужирным).<br />
-Дополнительно в коде добавили сетевые устройства из подсети 192.168.50.0/24 — они потребуются для настройки хостов с помощью Ansible.</p>
+Дополнительно в коде добавили сетевые устройства из подсети 192.168.50.0/24 — они потребуются для настройки хостов с помощью Ansible.<br />
+Так как все настройки будем выполнять с помощью Ansible, закомментировали в Vagrantfile почти все shell блоки.</p>
 
 <p>Снова запустим эти виртуальные машины:</p>
 
@@ -712,8 +713,6 @@ VM, run `vagrant status NAME`.
 <p>После того, как все 7 серверов у нас развернуты, нам нужно настроить маршрутизацию и NAT таким образом, чтобы доступ в Интернет со всех хостов был через inetRouter и каждый сервер должен быть доступен с любого из 7 хостов.<br />
 Все настройки будем выполнять с помощью Ansible.</p>
 
-<h4>Настройка NAT</h4>
-
 <p>Создадим директорий roles:</p>
 
 <pre>[student@pv-homeworks1-10 ansible]$ mkdir ./roles
@@ -725,6 +724,58 @@ VM, run `vagrant status NAME`.
 [student@pv-homeworks1-10 roles]$ ansible-galaxy init netarchitecture
 - Role netarchitecture was created successfully
 [student@pv-homeworks1-10 roles]$</pre>
+
+<h4>Настройка NAT</h4>
+
+<p>В файл ./netarchitecture/tasks/main.yml добавим следующие строки:</p>
+
+<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/tasks/main.yml</pre>
+
+<pre>---
+# tasks file for netarchitecture
+
+- name: Set up NAT on inetRouter
+  block:
+  - name: install iptables
+    yum:
+      name:
+      - iptables
+      - iptables-services
+      state: present
+      update_cache: true
+
+  - name: copy iptables config
+    template:
+      src: iptables
+      dest: /etc/sysconfig/iptables
+      owner: root
+      group: root
+      mode: 0600
+    notify:
+      - start and enable iptables service
+  when: (ansible_hostname == "inetRouter")</pre>
+
+<p>Первый модуль «install iptables» устанавливает нам необходимые пакеты. Второй модуль "copy iptables config" копирует нам конфигурационный файл правил Iptables (который мы рассматривали в настройке NAT вручную).</p>
+
+<p>В файл ./netarchitecture/handlers/main.yml добавим модуль, который производит старт службы iptables и её добавление в автозапуск:</p>
+
+<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/handlers/main.yml</pre>
+
+<pre>---
+# handlers file for netarchitecture
+
+- name: start and enable iptables service
+  service:
+    name: iptables
+    state: restarted
+    enabled: true</pre>
+
+<h4>Маршрутизация транзитных пакетов (IP forward)</h4>
+
+
+
+
+
 
 
 
