@@ -710,10 +710,21 @@ VM, run `vagrant status NAME`.
 [student@pv-homeworks1-10 netarchitecture]$</pre>
 
 <p>После того, как все 7 серверов у нас развернуты, нам нужно настроить маршрутизацию и NAT таким образом, чтобы доступ в Интернет со всех хостов был через inetRouter и каждый сервер должен быть доступен с любого из 7 хостов.<br />
-Часть настройки у нас уже выполнена, давайте рассмотрим подробнее команды из Vagrantfile.</p>
+Все настройки будем выполнять с помощью Ansible.</p>
 
 <h4>Настройка NAT</h4>
 
+<p>Создадим директорий roles:</p>
+
+<pre>[student@pv-homeworks1-10 ansible]$ mkdir ./roles
+[student@pv-homeworks1-10 ansible]$</pre>
+
+<p>Перейдём в этот директорий и с помощью команды ansible-galaxy init создадим структуру директорий:</p>
+
+<pre>[student@pv-homeworks1-10 ansible]$ cd ./roles/
+[student@pv-homeworks1-10 roles]$ ansible-galaxy init netarchitecture
+- Role netarchitecture was created successfully
+[student@pv-homeworks1-10 roles]$</pre>
 
 
 
