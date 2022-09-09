@@ -421,7 +421,7 @@ Broadcast-адрес нужен для рассылки всем устройс�
 <tr>
     <td rowspan="4">office2Router</td>
     <td>192.168.255.6/30</td>
-    <td rowspan="5">Debian 11</td>
+    <td rowspan="4">Debian 11</td>
 </tr>
 <tr>
     <td>192.168.1.1/26</td>
