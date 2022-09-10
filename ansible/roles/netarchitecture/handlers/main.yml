@@ -1,0 +1,24 @@
+---
+# handlers file for netarchitecture
+
+- name: iptables start and enable
+  service:
+    name: iptables
+    state: restarted
+    enabled: true
+
+- name: network restart redhat
+  service:
+    name: network
+    state: restarted
+  when: ansible_os_family == "RedHat"
+
+- name: netplan apply ubuntu
+  command: netplan apply
+  when: ansible_os_family == "Ubuntu"
+
+- name: network restart debian
+  service:
+    name: systemd-networkd
+    state: restarted
+  when: ansible_os_family == "Debian"

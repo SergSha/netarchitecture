@@ -89,7 +89,7 @@ Vagrant.configure("2") do |config|
         mkdir -p ~root/.ssh
         cp ~vagrant/.ssh/auth* ~root/.ssh
       SHELL
-      case boxname.to_s
+#      case boxname.to_s
 #      when "inetRouter"
 #        box.vm.provision "shell", run: "always", inline: <<-SHELL
 #          sysctl net.ipv4.conf.all.forwarding=1

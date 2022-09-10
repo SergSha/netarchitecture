@@ -256,7 +256,7 @@ Broadcast-адрес нужен для рассылки всем устройс�
 192.168.255.64/26<br />
 192.168.255.128/25</p>
 
-<p>Сформируем таблицу топологии свободных подсетей:</p>
+<p>Сформируем таблицу топологии свободных подсетей, где также указаны количество хостов и broadcast адреса в каждой подсети:</p>
 
 <table>
 <tr>
@@ -538,11 +538,11 @@ end</pre>
 
 <p>Запустим эти виртуальные машины:</p>
 
-<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant up</pre>
+<pre>[user@localhost netarchitecture]$ vagrant up</pre>
 
 <p>Данный Vagrantfile развернет нам 3 хоста: inetRouter, centralRouter и centralServer:</p>
 
-<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant status
+<pre>[user@localhost netarchitecture]$ vagrant status
 Current machine states:
 
 inetRouter                running (virtualbox)
@@ -552,7 +552,7 @@ centralServer             running (virtualbox)
 This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
-[student@pv-homeworks1-10 netarchitecture]$</pre>
+[user@localhost netarchitecture]$</pre>
 
 <p>Исходя их схемы нам ещё потребуется развернуть 4 сервера:<br />
 ● office1Router<br />
@@ -652,7 +652,7 @@ Vagrant.configure("2") do |config|
         mkdir -p ~root/.ssh
         cp ~vagrant/.ssh/auth* ~root/.ssh
       SHELL
-      case boxname.to_s
+#      case boxname.to_s
 #      when "inetRouter"
 #        box.vm.provision "shell", run: "always", inline: <<-SHELL
 #          sysctl net.ipv4.conf.all.forwarding=1
@@ -690,11 +690,11 @@ end</pre>
 
 <p>Снова запустим эти виртуальные машины:</p>
 
-<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant up</pre>
+<pre>[user@localhost netarchitecture]$ vagrant up</pre>
 
 <p>Смотрим состояние запущенных виртуальных машин:</p>
 
-<pre>[student@pv-homeworks1-10 netarchitecture]$ vagrant status
+<pre>[user@localhost netarchitecture]$ vagrant status
 Current machine states:
 
 inetRouter                running (virtualbox)
@@ -708,28 +708,30 @@ office2Server             running (virtualbox)
 This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
-[student@pv-homeworks1-10 netarchitecture]$</pre>
+[user@localhost netarchitecture]$</pre>
 
 <p>После того, как все 7 серверов у нас развернуты, нам нужно настроить маршрутизацию и NAT таким образом, чтобы доступ в Интернет со всех хостов был через inetRouter и каждый сервер должен быть доступен с любого из 7 хостов.<br />
 Все настройки будем выполнять с помощью Ansible.</p>
 
 <p>Создадим директорий roles:</p>
 
-<pre>[student@pv-homeworks1-10 ansible]$ mkdir ./roles
-[student@pv-homeworks1-10 ansible]$</pre>
+<pre>[user@localhost ansible]$ mkdir ./roles
+[user@localhost ansible]$</pre>
 
 <p>Перейдём в этот директорий и с помощью команды ansible-galaxy init создадим структуру директорий:</p>
 
-<pre>[student@pv-homeworks1-10 ansible]$ cd ./roles/
-[student@pv-homeworks1-10 roles]$ ansible-galaxy init netarchitecture
+<pre>[user@localhost ansible]$ cd ./roles/
+[user@localhost roles]$ ansible-galaxy init netarchitecture
 - Role netarchitecture was created successfully
-[student@pv-homeworks1-10 roles]$</pre>
+[user@localhost roles]$</pre>
 
 <h4>Настройка NAT</h4>
 
-<p>Для того, чтобы на всех серверах работал интернет, на сервере inetRouter должен быть настроен NAT. Он настраивается с помощью команды:<br />
-iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE<br />
-При настройке NAT таким образом, правило удаляется после перезагрузки сервера. Для того, чтобы правила применялись после перезагрузки, в CentOS 7 нужно выполнить следующие действия:<br />
+<p>Для того, чтобы на всех серверах работал интернет, на сервере inetRouter должен быть настроен NAT. Он настраивается с помощью команды:</p>
+
+<pre>iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE</pre>
+
+<p>При настройке NAT таким образом, правило удаляется после перезагрузки сервера. Для того, чтобы правила применялись после перезагрузки, в CentOS 7 нужно выполнить следующие действия:<br />
 1)Подключиться по SSH к хосту: ssh root@inetRouter<br />
 2)Проверить, что отключен другой firewall: systemctl status firewalld<br />
 Если служба будет запущена, то нужно её отключить и удалить из автозагрузки:</p>
@@ -744,12 +746,12 @@ systemctl disable firewalld</pre>
 <p>4) Добавить службу iptables в автозапуск: systemctl enable iptables<br />
 5) Отредактировать файл /etc/sysconfig/iptables: vi /etc/sysconfig/iptables<br />
 Данный файл содержит в себе базовые правила, которые появляются с установкой iptables.<br />
-Нужно обратить внимание на следующие правила:</p>
+Обращаем внимание на следующие правила:</p>
 
 <pre>-A INPUT -j REJECT --reject-with icmp-host-prohibited
 -A FORWARD -j REJECT --reject-with icmp-host-prohibited</pre>
 
-<p>Они запретят ping между хостами, через данный сервер. В данном ДЗ эти команды нужно удалить или закомментировать, чтобы они не применялись.<br />
+<p>Они запрещают ping между хостами, через данный сервер. В данном ДЗ эти команды закомментируем, чтобы они не применялись.<br />
 Файл /etc/sysconfig/iptables не обязательно писать с нуля. Можно поступить следующим образом:<br />
 Установить iptables и iptables-services<br />
 Запустить службу iptables<br />
@@ -759,10 +761,10 @@ systemctl disable firewalld</pre>
 Для их применения нужно перезапустить службу iptables.<br />
 Если просто запустить команду iptables-save, то на экране консоли появится полный список всех правил, которые действуют на текущий момент. Данная команда очень удобна для поиска проблем в iptables.</p>
 
-<p>Идентичные действия выполним с помощью Ansible.<br />
+<p>Вышеперечисленные действия выполним с помощью Ansible.<br />
 Для этого в файл ./netarchitecture/tasks/main.yml добавим следующие команды:</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/tasks/main.yml</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/tasks/main.yml</pre>
 
 <pre>---
 # tasks file for netarchitecture
@@ -790,13 +792,13 @@ systemctl disable firewalld</pre>
 
 <p>Первый модуль «install iptables» устанавливает нам необходимые пакеты. Второй модуль "copy iptables config" копирует нам конфигурационный файл правил Iptables (который мы рассматривали в настройке NAT вручную).</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/files/iptables</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/files/iptables</pre>
 
 <pre># Generated by iptables-save v1.4.21 on Fri Sep 09 09:53:32 2022
 *filter
 :INPUT ACCEPT [0:0]
 :FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [37:2828]
+:OUTPUT ACCEPT [0:0]
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
@@ -818,7 +820,7 @@ COMMIT
 
 <p>В файл ./netarchitecture/handlers/main.yml добавим модуль, который производит старт службы iptables и её добавление в автозапуск:</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/handlers/main.yml</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/handlers/main.yml</pre>
 
 <pre>---
 # handlers file for netarchitecture
@@ -844,7 +846,7 @@ COMMIT
 
 <p>В Ansible есть специальный блок для внесений изменений в параметры ядра:</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/tasks/main.yml</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/tasks/main.yml</pre>
 
 <pre>...
 - name: set up forward packages across routers
@@ -856,7 +858,7 @@ COMMIT
 
 <p>В условии указано, что изменения будут применяться только для группы «routers», группа routers создана в hosts-файле:</p>
 
-<pre>[student@pv-homeworks1-10 netarchitecture]$ vi ./ansible/hosts</pre>
+<pre>[user@localhost netarchitecture]$ vi ./ansible/hosts</pre>
 
 <pre>[routers]
 inetRouter ansible_host=192.168.50.10 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/inetRouter/virtualbox/private_key
@@ -894,7 +896,7 @@ Vagrant по умолчанию не добавляет строку DEFROUTE=ye
 
 <p>Для выполнения идентичных изменений с помощью Ansible, воспользуемся следующим блоком:</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/tasks/main.yml</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/tasks/main.yml</pre>
 
 <pre># echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
 - name: deisable default route
@@ -1042,7 +1044,7 @@ iface eth2 inet static
 
 <p>Так как для настройки используем Ansible, нам необходимо подготовить файлы с маршрутами для всех серверов. Далее с помощью модуля template мы можем их добавлять:</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/tasks/main.yml</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/tasks/main.yml</pre>
 
 <pre>...
 - name: set up route on office1Server
@@ -1074,7 +1076,7 @@ iface eth2 inet static
 
 <p>Конфигурационный файл office1Server_route.j2:</p>
 
-<pre>[student@pv-homeworks1-10 roles]$ vi ./netarchitecture/templates/office1Server_route.j2</pre>
+<pre>[user@localhost roles]$ vi ./netarchitecture/templates/office1Server_route.j2</pre>
 
 <pre>---
 network:
