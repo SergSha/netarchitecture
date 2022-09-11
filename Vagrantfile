@@ -43,7 +43,7 @@ MACHINES = {
       {ip: '192.168.2.65', adapter: 4, netmask: "255.255.255.192", virtualbox__intnet: "test1-net"},
       {ip: '192.168.2.129', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "managers-net"},
       {ip: '192.168.2.193', adapter: 6, netmask: "255.255.255.192", virtualbox__intnet: "office1-net"},
-	  {ip: '192.168.50.20', adapter: 8},
+      {ip: '192.168.50.20', adapter: 8},
     ]
   },
   :office1Server => {
@@ -62,7 +62,7 @@ MACHINES = {
       {ip: '192.168.1.1', adapter: 3, netmask: "255.255.255.128", virtualbox__intnet: "dev2-net"},
       {ip: '192.168.1.129', adapter: 4, netmask: "255.255.255.192", virtualbox__intnet: "test2-net"},
       {ip: '192.168.1.193', adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "office2-net"},
-	  {ip: '192.168.50.30', adapter: 8},
+      {ip: '192.168.50.30', adapter: 8},
     ]
   },
   :office2Server => {
@@ -109,14 +109,14 @@ Vagrant.configure("2") do |config|
 #          systemctl restart network
 #        SHELL
 #      end
-#      if boxconfig[:vm_name] == "office2Server"
-#        box.vm.provision "ansible" do |ansible|
-#          ansible.playbook = "ansible/provision.yml"
-#          ansible.inventory_path = "ansible/hosts"
-#          ansible.host_key_checking = "false"
-#          ansible.limit = "all"
-#        end
-#      end
+      if boxconfig[:vm_name] == "office2Server"
+        box.vm.provision "ansible" do |ansible|
+          ansible.playbook = "ansible/provision.yml"
+          ansible.inventory_path = "ansible/hosts"
+          ansible.host_key_checking = "false"
+          ansible.limit = "all"
+        end
+      end
     end
   end
 end

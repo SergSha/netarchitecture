@@ -3,9 +3,5 @@
   hosts: all
   become: true
 
-#  vars:
-#    backup_ip_addr: "192.168.50.160"
-#    client_ip_addr: "192.168.50.150"
-
   roles:
     - { role: netarchitecture, when: ansible_system == 'Linux' }
