@@ -1122,7 +1122,7 @@ end
 ● CentOS 7: yum -y install traceroute<br />
 ● Debian,Ubuntu: apt install -y traceroute</p>
 
-<h4>Проерка работы нашего стенда "архитектура сети"</h4>
+<h4>Проверка работы нашего стенда "Архитектура сети"</h4>
 
 <p>Запустим наш стенд с помощью vagrant+ansible:</p>
 
