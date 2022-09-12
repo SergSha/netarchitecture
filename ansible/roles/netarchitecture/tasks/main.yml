@@ -16,7 +16,9 @@
   when: ansible_os_family == "RedHat"
 
 - name: All Servers | install traceroute debian
-  shell: apt update -y && apt install -y traceroute
+  apt:
+    name: traceroute
+    update_cache: yes
   when: ansible_os_family == "Debian"
 
 - name: All Servers | delete default routes
