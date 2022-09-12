@@ -13,9 +13,10 @@
   - "01-forwarding.conf"
 
 - name: network restart redhat
-  service:
-    name: network.service
-    state: restarted
+  command: /etc/init.d/network restart
+#  service:
+#    name: network.service
+#    state: restarted
 #  when: ansible_os_family == "RedHat"
 
 - name: netplan apply ubuntu

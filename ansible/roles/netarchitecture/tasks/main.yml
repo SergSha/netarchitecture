@@ -109,7 +109,7 @@
     notify: network restart redhat
   when: ansible_hostname == "centralServer"
 
-- name: office1Router | set up route on 
+- name: office1Router | set up route
   lineinfile:
     path: /etc/netplan/50-vagrant.yaml
     insertafter: '^(.*)192.168.255.10(.*)$'

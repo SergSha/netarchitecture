@@ -361,7 +361,7 @@ Broadcast-адрес нужен для рассылки всем устройс�
 
 <p>Изучив таблицу топологии сети и Vagrant-стенд из задания, мы можем построить полную схему сети:</p>
 
-
+<img src="https://github.com/SergSha/netarchitecture/blob/main/infra.png" alt="infra.png" />
 
 <p>Знак облака означает сеть, которую необходимо будет настроить на сервере.<br />
 Значки роутеров и серверов означают хосты, которые нам нужно будет создать.</p>
@@ -1100,7 +1100,7 @@ network:
 <pre>...
 if boxconfig[:vm_name] == "office2Server"
   box.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible/provision.yml"
+    ansible.playbook = "ansible/playbook.yml"
     ansible.inventory_path = "ansible/hosts"
     ansible.host_key_checking = "false"
     ansible.limit = "all"
@@ -1122,14 +1122,150 @@ end
 ● CentOS 7: yum -y install traceroute<br />
 ● Debian,Ubuntu: apt install -y traceroute</p>
 
-<p>Проверка выхода в Интернет через сервер inetRouter c хоста office1Server:</p>
+<h4>Проерка работы нашего стенда "Архитекстура сети"</h4>
 
-<pre>root@office1Server:~# traceroute 8.8.8.8
-...
-root@office1Server:~#</pre>
+<p>Запустим наш стенд с помощью vagrant+ansible:</p>
 
-<p>В данном примере, в первых трёх переходах мы видим что запрос идёт через сервера: office1Router — centralRouter — inetRouter</p>
+<pre>[user@localhost netarchitecture]$ vagrant up</pre>
+
+<p>Зайдем на сервер, например, office2Server с помощью утилиты traceroute проверим выход в интернет через сервер inetRoute (ip:192.168.255.1):</p>
+
+<pre>[user@localhost netarchitecture]$ vagrant ssh office2Server
+Linux office2Server 5.10.0-16-amd64 #1 SMP Debian 5.10.127-1 (2022-06-30) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Sep 12 20:40:00 2022 from 192.168.50.1
+vagrant@office2Server:~$ traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  1.745 ms  1.167 ms  1.976 ms
+ 2  192.168.255.5 (192.168.255.5)  3.934 ms  3.888 ms  4.666 ms
+ 3  192.168.255.1 (192.168.255.1)  4.298 ms  3.539 ms  6.372 ms
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  * * *
+ 8  ae1-3121.edge8.Frankfurt1.level3.net (4.69.158.186)  13.438 ms  15.269 ms ae2-3221.edge8.Frankfurt1.level3.net (4.69.158.190)  21.262 ms
+ 9  142.250.165.106 (142.250.165.106)  20.350 ms  14.409 ms  15.798 ms
+10  * * *
+11  dns.google (8.8.8.8)  10.478 ms  9.256 ms  9.393 ms
+vagrant@office2Server:~$</pre>
+
+<p>В данном примере, в первых трёх переходах мы видим что запрос идёт через сервера: office2Router(ip:192.168.1.1) — centralRouter(ip:192.168.255.5) — inetRouter(ip:192.168.255.1).</p>
+
+<p>Проверим, что с этого хоста доступны сервера centralServer(ip:192.168.0.2) и office1Server(ip:192.168.2.130):</p>
+
+<pre>vagrant@office2Server:~$ traceroute 192.168.0.2
+traceroute to 192.168.0.2 (192.168.0.2), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  2.276 ms  1.468 ms  2.384 ms
+ 2  192.168.255.5 (192.168.255.5)  7.492 ms  6.951 ms  5.743 ms
+ 3  192.168.0.2 (192.168.0.2)  6.450 ms  5.798 ms  5.309 ms
+vagrant@office2Server:~$</pre>
+
+<pre>vagrant@office2Server:~$ traceroute 192.168.2.130
+traceroute to 192.168.2.130 (192.168.2.130), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  1.810 ms  1.710 ms  2.092 ms
+ 2  192.168.255.5 (192.168.255.5)  4.179 ms  2.439 ms  3.372 ms
+ 3  192.168.255.10 (192.168.255.10)  8.992 ms  10.567 ms  9.613 ms
+ 4  192.168.2.130 (192.168.2.130)  12.631 ms  13.877 ms  13.311 ms
+vagrant@office2Server:~$ </pre>
+
+<p>Проверим выход в интернет с хоста office1Server:</p>
+
+<pre>[user@localhost netarchitecture]$ vagrant ssh office1Server
+Welcome to Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-125-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon Sep 12 21:11:51 UTC 2022
+
+  System load:  0.1               Users logged in:          0
+  Usage of /:   3.9% of 38.70GB   IPv4 address for enp0s19: 192.168.50.21
+  Memory usage: 22%               IPv4 address for enp0s3:  10.0.2.15
+  Swap usage:   0%                IPv4 address for enp0s8:  192.168.2.130
+  Processes:    116
 
 
+0 updates can be applied immediately.
 
+New release '22.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+Last login: Mon Sep 12 20:40:01 2022 from 192.168.50.1
+vagrant@office1Server:~$ traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  _gateway (192.168.2.129)  2.574 ms  1.917 ms  3.202 ms
+ 2  192.168.255.9 (192.168.255.9)  6.005 ms  12.233 ms  11.457 ms
+ 3  192.168.255.1 (192.168.255.1)  12.983 ms  12.177 ms  13.673 ms
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  * * *
+ 8  ae2-3221.edge8.Frankfurt1.level3.net (4.69.158.190)  15.485 ms ae1-3121.edge8.Frankfurt1.level3.net (4.69.158.186)  17.234 ms ae2-3221.edge8.Frankfurt1.level3.net (4.69.158.190)  14.074 ms
+ 9  142.250.165.106 (142.250.165.106)  16.567 ms  12.972 ms  15.944 ms
+10  * * *
+11  dns.google (8.8.8.8)  12.949 ms  13.079 ms  10.180 ms
+vagrant@office1Server:~$</pre>
+
+<p>Как видим, с сервера office1Server выходим в интернет через сервера: office1Router(ip:192.168.2.129) — centralRouter(ip:192.168.255.9) — inetRouter(ip:192.168.255.1).</p>
+
+<p>Проверим доступ к серверам centralServer(ip:192.168.0.2) и offic2Server(192.168.1.2):</p>
+
+<pre>vagrant@office1Server:~$ traceroute 192.168.0.2
+traceroute to 192.168.0.2 (192.168.0.2), 30 hops max, 60 byte packets
+ 1  _gateway (192.168.2.129)  1.951 ms  2.149 ms  2.019 ms
+ 2  192.168.255.9 (192.168.255.9)  10.492 ms  9.773 ms  10.879 ms
+ 3  192.168.0.2 (192.168.0.2)  27.866 ms  27.337 ms  27.663 ms
+vagrant@office1Server:~$</pre>
+
+<pre>vagrant@office1Server:~$ traceroute 192.168.1.2
+traceroute to 192.168.1.2 (192.168.1.2), 30 hops max, 60 byte packets
+ 1  _gateway (192.168.2.129)  2.259 ms  3.671 ms  1.871 ms
+ 2  192.168.255.9 (192.168.255.9)  5.580 ms  14.448 ms  14.851 ms
+ 3  192.168.255.6 (192.168.255.6)  20.851 ms  20.062 ms  20.965 ms
+ 4  192.168.1.2 (192.168.1.2)  21.439 ms  20.736 ms  21.502 ms
+vagrant@office1Server:~$</pre>
+
+<p>Проверим выход в интернет с сервера centralServer:</p>
+
+<pre>[root@centralServer ~]# traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  gateway (192.168.0.1)  2.660 ms  1.560 ms  1.291 ms
+ 2  192.168.255.1 (192.168.255.1)  5.397 ms  4.279 ms  3.449 ms
+ 3  * * *
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  ae1-3121.edge8.Frankfurt1.level3.net (4.69.158.186)  11.036 ms  11.678 ms  12.235 ms
+ 8  142.250.165.106 (142.250.165.106)  11.700 ms  9.387 ms  9.883 ms
+ 9  * * *
+10  dns.google (8.8.8.8)  9.615 ms  8.515 ms  8.346 ms
+[root@centralServer ~]#</pre>
+
+<p>Как видим, с сервера centralServer выходим в интернет через сервера: centralRouter(ip:192.168.0.1) — inetRouter(ip:192.168.255.1).</p>
+
+<p>Проверим доступ к серверам office1Server(ip:192.168.2.130) и offic2Server(ip:192.168.1.2):</p>
+
+<pre>[root@centralServer ~]# traceroute 192.168.2.130
+traceroute to 192.168.2.130 (192.168.2.130), 30 hops max, 60 byte packets
+ 1  gateway (192.168.0.1)  2.444 ms  1.813 ms  1.035 ms
+ 2  192.168.255.10 (192.168.255.10)  5.220 ms  5.712 ms  4.525 ms
+ 3  192.168.2.130 (192.168.2.130)  22.001 ms  20.248 ms  18.445 ms
+[root@centralServer ~]#</pre>
+
+<pre>[root@centralServer ~]# traceroute 192.168.1.2
+traceroute to 192.168.1.2 (192.168.1.2), 30 hops max, 60 byte packets
+ 1  gateway (192.168.0.1)  1.972 ms  1.979 ms  1.647 ms
+ 2  192.168.255.6 (192.168.255.6)  2.960 ms  1.888 ms  3.179 ms
+ 3  192.168.1.2 (192.168.1.2)  6.990 ms  7.226 ms  6.368 ms
+[root@centralServer ~]#</pre>
+
+<p>Из всего этого мы делаем вывод, что все сервера имеют выход через сервер inetRouter и доступны друг другу.</p>
 
