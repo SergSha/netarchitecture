@@ -111,7 +111,7 @@ Vagrant.configure("2") do |config|
 #      end
       if boxconfig[:vm_name] == "office2Server"
         box.vm.provision "ansible" do |ansible|
-          ansible.playbook = "ansible/provision.yml"
+          ansible.playbook = "ansible/playbook.yml"
           ansible.inventory_path = "ansible/hosts"
           ansible.host_key_checking = "false"
           ansible.limit = "all"

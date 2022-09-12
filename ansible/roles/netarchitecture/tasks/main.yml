@@ -9,13 +9,13 @@
   when: (ansible_os_family == "RedHat") and (ansible_facts.services["firewalld.service"] is defined) and (ansible_facts.services["firewalld.service"].state == "running")
 #  when: ansible_os_family == "RedHat"
 
-- name: All Servers | install traceroute redhat
+- name: All Redhat Servers | install traceroute redhat
   yum:
     name: traceroute
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: All Servers | install traceroute debian
+- name: All Debian Servers | install traceroute debian
   apt:
     name: traceroute
     update_cache: yes
@@ -74,12 +74,12 @@
   block:
   - name: centralRouter | disable default route
     lineinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+      path: /etc/sysconfig/network-scripts/ifcfg-eth0
       line: DEFROUTE=no
 
   - name: centralRouter | add default gateway
     lineinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      path: /etc/sysconfig/network-scripts/ifcfg-eth1
       line: GATEWAY=192.168.255.1
 
   - name: centralRouter | set up route
@@ -99,12 +99,12 @@
   block:
   - name: centralServer | disable default route
     lineinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+      path: /etc/sysconfig/network-scripts/ifcfg-eth0
       line: DEFROUTE=no
 
   - name: centralServer | add default gateway for centralServer
     lineinfile:
-      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      path: /etc/sysconfig/network-scripts/ifcfg-eth1
       line: GATEWAY=192.168.0.1
     notify: network restart redhat
   when: ansible_hostname == "centralServer"

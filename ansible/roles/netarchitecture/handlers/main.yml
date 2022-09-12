@@ -14,7 +14,7 @@
 
 - name: network restart redhat
   service:
-    name: network
+    name: network.service
     state: restarted
 #  when: ansible_os_family == "RedHat"
 
